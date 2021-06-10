@@ -46,13 +46,14 @@ public class DataProcessingWithStreams {
     }
 
     public void preProcess() throws Exception {
-        Map<String, Integer> data = Files.lines(Paths.get(DATASET_LOCAL_PATH))
+        //Map<String, Integer> data = Files.lines(Paths.get(DATASET_LOCAL_PATH))
+        List<UsElectionsItem> data = Files.lines(Paths.get(DATASET_LOCAL_PATH))
             .skip(1)
             .map(mapToItem)
             .filter(s -> s.party.equals("dem"))
-            //.collect(toList());
+            .collect(toList());
             //.collect(groupingBy(s -> s.party, Collectors.summingInt(s -> s.totalVotes2008)));
-            .collect(groupingBy(s -> s.party, Collectors.summingInt(s -> s.totalVotes2016)));
+            //.collect(groupingBy(s -> s.party, Collectors.summingInt(s -> s.totalVotes2016)));
         
         System.out.println(data);
     }
