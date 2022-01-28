@@ -2,11 +2,9 @@ package br.nom.martinelli.ricardo;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Cluster.Builder;
-import com.datastax.driver.core.Host;
-import com.datastax.driver.core.Metadata;
-import com.datastax.driver.core.Session;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 
 public class DataProcessingWithCassandra {
 
@@ -77,19 +75,25 @@ public class DataProcessingWithCassandra {
                     .append(" VALUES(uuid(),'','','','','','','dem',123456,0,0);");
         session.execute(insertTable.toString());
 
-        StringBuilder selectTable = new StringBuilder("SELECT * FROM uselections.uselections;");
-        ResultSet rs = session.execute(selectTable.toString());
-        for (Row r : rs) {
-            System.out.print(r.getUUID("id"));
-            System.out.print("\t");
-            System.out.print(r.getString("party"));
-            //System.out.print("\t");
-            //System.out.print(r.getDecimal("total_votes_2008"));
-            System.out.print("\n");
-        }
+        StringBuilder insertCsv = new StringBuilder("COPY uselections.uselections")
+                    .append(" FROM 'data/us-elections.csv' ")
+                    .append(" WITH DELIMITER=',' ")
+                    .append(" AND HEADER=TRUE ");
+        session.execute(insertCsv.toString());
 
-        StringBuilder dropKeyspace = new StringBuilder("DROP KEYSPACE uselections;");
-        session.execute(dropKeyspace.toString());
+        // StringBuilder selectTable = new StringBuilder("SELECT * FROM uselections.uselections;");
+        // ResultSet rs = session.execute(selectTable.toString());
+        // for (Row r : rs) {
+        //     System.out.print(r.getUUID("id"));
+        //     System.out.print("\t");
+        //     System.out.print(r.getString("party"));
+        //     System.out.print("\t");
+        //     System.out.print(r.getDecimal("total_votes_2008"));
+        //     System.out.print("\n");
+        // }
+
+        //StringBuilder dropKeyspace = new StringBuilder("DROP KEYSPACE uselections;");
+        //session.execute(dropKeyspace.toString());
 
         connector.close();
     }
